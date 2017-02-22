@@ -6,9 +6,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.jp.weather.R
 import com.jp.weather.adapter.ForecastListAdapter
+import com.jp.weather.domain.Forecast
 import com.jp.weather.domain.RequestForecastCommand
 import org.jetbrains.anko.async
 import org.jetbrains.anko.find
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
 class MainActivity : AppCompatActivity() {
@@ -20,7 +22,14 @@ class MainActivity : AppCompatActivity() {
         forecastList.layoutManager = LinearLayoutManager(this)
         async {
             val result = RequestForecastCommand("94043").execute()
-            uiThread { forecastList.adapter = ForecastListAdapter(result) }
+            uiThread {
+                forecastList.adapter = ForecastListAdapter(result,
+                        object : ForecastListAdapter.OnItemClickListener {
+                            override fun invoke(forecast: Forecast) {
+                                toast(forecast.date)
+                            }
+                        })
+            }
         }
     }
 }
